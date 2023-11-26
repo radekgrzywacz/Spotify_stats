@@ -7,10 +7,20 @@ public class MainProject
 {
     public static void Main(string[] args)
     {
-        string filepath = "/Users/radek/Desktop/studia/Rok 2/PK/spotify_artist_data.csv";
+        string filepath = "/Users/radek/RiderProjects/4c668c11-gr03-repo/Projekt/PK3_project/spotify_artist_data.csv";
         
         var reader = new Reader();
-        reader.read(filepath);
-        
+
+      //  reader.read(filepath);
+
+        List<Artist> records = reader.read(filepath);
+
+        foreach (var artist in records)
+        {
+            Console.WriteLine(artist.artistName + " 's lead streams is: " + artist.leadStreams);
+        }
+
+
+
     }
 }
