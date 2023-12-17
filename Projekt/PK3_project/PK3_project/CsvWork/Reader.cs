@@ -19,8 +19,23 @@ public class Reader
 
         return int.Parse(newInt);
     }
-    
-    
+
+    public string[] GetHeader(string filepath)
+    {
+        string[] headerArray;
+        using (TextFieldParser parser = new TextFieldParser(filepath))
+        {
+            parser.Delimiters = new string[] { "," };
+            parser.HasFieldsEnclosedInQuotes = true;
+
+            // Skip header line
+            var header = parser.ReadLine();
+
+            headerArray = header.Split(",");
+        }
+
+        return headerArray;
+    }
     public IEnumerable<Artist> Read(string filepath)
     {
         var logger = new Logger();

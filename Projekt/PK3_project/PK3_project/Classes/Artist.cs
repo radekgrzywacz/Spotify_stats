@@ -19,5 +19,6 @@ public class Artist
     public int houndredMillions { get; set; }
     
     public DateTime lastUpdated { get; set; }
+    
 }
 
