@@ -19,7 +19,6 @@ public class Logger : LogBase
    
    public override void Log(string Message)
    {
-      //Console.WriteLine("Logged : {0}", Message);
 
       using (System.IO.StreamWriter w = System.IO.File.AppendText(this.FilePath))
       {

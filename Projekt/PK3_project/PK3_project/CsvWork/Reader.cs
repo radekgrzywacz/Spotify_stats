@@ -21,7 +21,7 @@ public class Reader
     }
     
     
-    public IEnumerable<Artist> read(string filepath)
+    public IEnumerable<Artist> Read(string filepath)
     {
         var logger = new Logger();
         
@@ -55,8 +55,7 @@ public class Reader
                 }
                 catch (Exception ex)
                 {
-                    // Obsłużenie lub zignorowanie wyjątku, na przykład wypisanie komunikatu
-                    var message = $"Błąd podczas przetwarzania w linii {lineCounter}: {ex.Message}";
+                    var message = $"Error in deserializing line {lineCounter}: {ex.Message}";
                     logger.Log(message);
                 }
 
@@ -67,9 +66,6 @@ public class Reader
 
                 lineCounter++;
             }
-            
-            
-            
 
         }
     }

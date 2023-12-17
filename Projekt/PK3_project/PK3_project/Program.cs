@@ -12,7 +12,17 @@ public class Program
         
         
         var reader = new Reader();
-        var results = reader.read(filepath).ToList();
+        var artists = reader.Read(filepath).ToList();
+
+        var stats = new StatisticsPrinter();
+        
+        stats.PrintTheMostPopularArtist(artists);
+
+        stats.SortByProperty(artists, "leadStreams");
+        
+        stats.CalculateMinMax(artists, "leadStreams" );
+        
+        stats.CalculateAverage(artists,"leadStreams" );
 
     }
 }
