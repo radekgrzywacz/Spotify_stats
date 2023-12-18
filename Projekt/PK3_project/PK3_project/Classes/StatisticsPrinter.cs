@@ -27,6 +27,10 @@ public class StatisticsPrinter
 
     public void SortByProperty(List<Artist> artists, string propName)
     {
+        
+        propName = char.ToLower(propName[0]) + propName.Substring(1).Replace(" ", ""); 
+        //if(propName == "")
+        
         List<Artist> sortedListy =
             artists.OrderByDescending(x => typeof(Artist).GetProperty(propName).GetValue(x, null)).ToList();
 
