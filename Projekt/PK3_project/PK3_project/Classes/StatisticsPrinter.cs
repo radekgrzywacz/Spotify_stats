@@ -28,11 +28,18 @@ public class StatisticsPrinter
     public void SortByProperty(List<Artist> artists, string propName)
     {
         
-        propName = char.ToLower(propName[0]) + propName.Substring(1).Replace(" ", ""); 
-        //if(propName == "")
+        string originalPropName = propName;
+        if (propName == "")
+        {
+            originalPropName = "id";
+        }
+        else
+        {
+            originalPropName = char.ToLower(propName[0]) + propName.Substring(1).Replace(" ", ""); 
+        }
         
         List<Artist> sortedListy =
-            artists.OrderByDescending(x => typeof(Artist).GetProperty(propName).GetValue(x, null)).ToList();
+            artists.OrderBy(x => typeof(Artist).GetProperty(originalPropName).GetValue(x, null)).ToList();
 
         using (var writer =
                new StreamWriter(
@@ -41,19 +48,46 @@ public class StatisticsPrinter
         {
             csv.WriteRecords(sortedListy);
         }
+        
+        Console.WriteLine("Your list was sorted and written into a sorted_data.csv file.");
 
     }
 
     public void CalculateMinMax(List<Artist> artists, string propName)
     {
+        string originalPropName = propName;
+        if (propName == "")
+        {
+            originalPropName = "id";
+        }
+        else
+        {
+        originalPropName = char.ToLower(propName[0]) + propName.Substring(1).Replace(" ", ""); 
+        }
+        
         List<Artist> sortedListy =
-            artists.OrderByDescending(x => typeof(Artist).GetProperty(propName).GetValue(x, null)).ToList();
+            artists.OrderByDescending(x => typeof(Artist).GetProperty(originalPropName).GetValue(x, null)).ToList();
 
-        var min = typeof(Artist).GetProperty(propName).GetValue(artists.Last());
-        var max = typeof(Artist).GetProperty(propName).GetValue(artists.First());
+        var value1 = typeof(Artist).GetProperty(originalPropName).GetValue(artists.Last());
+        var value2 = typeof(Artist).GetProperty(originalPropName).GetValue(artists.First());
 
-        string formattedMin = string.Format("{0:N0}", min);
-        string formattedMax = string.Format("{0:N0}", max);
+
+        long value1Long = Convert.ToInt64(value1);
+        long value2Long = Convert.ToInt64(value2);
+        string formattedMin;
+        string formattedMax;
+        if (value1Long > value2Long)
+        { 
+           formattedMin =string.Format("{0:N0}", value2);
+           formattedMax = string.Format("{0:N0}", value1);
+        }
+        else
+        {
+            formattedMin =string.Format("{0:N0}", value1);
+            formattedMax = string.Format("{0:N0}", value2);
+        }
+
+       
 
         Console.WriteLine(
             $"Minimal value of {propName} is {formattedMin}, maximum value of {propName} is {formattedMax}");
@@ -61,13 +95,23 @@ public class StatisticsPrinter
 
     public void CalculateAverage(List<Artist> artists, string propName)
     {
+        string originalPropName = propName;
+        if (propName == "")
+        {
+            originalPropName = "id";
+        }
+        else
+        {
+            originalPropName = char.ToLower(propName[0]) + propName.Substring(1).Replace(" ", ""); 
+        }
+        
         long sum = 0;
         for (int i = 0; i < artists.Count(); i++)
         {
-            if (typeof(Artist).GetProperty(propName).GetValue(artists[i]) != typeof(string) && 
-                typeof(Artist).GetProperty(propName).GetValue(artists[i]) != typeof(DateTime))
+            if (typeof(Artist).GetProperty(originalPropName).GetValue(artists[i]) != typeof(string) && 
+                typeof(Artist).GetProperty(originalPropName).GetValue(artists[i]) != typeof(DateTime))
             {
-                sum += (long)typeof(Artist).GetProperty(propName).GetValue(artists[i]);
+                sum += (long)typeof(Artist).GetProperty(originalPropName).GetValue(artists[i]);
             }
             else
             {

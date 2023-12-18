@@ -4,7 +4,7 @@ namespace PK3_project.ConsoleInterface;
 
 public class ConsoleOutput
 {
-    public void StartConsole(string filepath)
+    public void ViewStatistics(string filepath)
     {
         var reader = new Reader();
         var artists = reader.Read(filepath).ToList();
@@ -71,7 +71,7 @@ public class ConsoleOutput
         do
         {
             Console.WriteLine("Select what do you want to do:");
-            Console.WriteLine("1. Check the most popular artist, 2. Sort the data by chosen property, " +
+            Console.WriteLine("1. Check the most popular artist, 2. Sort the data by chosen property (ascending), " +
                               "3. Check minimum and maximum of chosen property, 4. Check average of chosen property");
 
             try
@@ -102,8 +102,19 @@ public class ConsoleOutput
                     break;
                 case 3:
                     property = ChoseProperty(filepath);
+                    // try
+                    // {
+                    //     stats.CalculateMinMax(origin, property);
+                    //     validInput = true;
+                    // }
+                    // catch (Exception ex)
+                    // {
+                    //     Console.WriteLine("Wrong data chosen, pick again: ");
+                    //     validInput = false;
+                    // }
                     stats.CalculateMinMax(origin, property);
                     validInput = true;
+                    
                     break;
                 case 4:
                     property = ChoseProperty(filepath);
