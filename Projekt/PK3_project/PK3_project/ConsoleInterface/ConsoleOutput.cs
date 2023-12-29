@@ -6,10 +6,13 @@ public class ConsoleOutput
 {
     public void ViewStatistics(string filepath)
     {
+        
         var reader = new Reader();
         var artists = reader.Read(filepath).ToList();
 
         var stats = new StatisticsPrinter();
+
+        stats.RankSpearman(artists, "leadStreams");
         
         // On account of project requirements I assumed that every region will have equal amount of artist,
         // with no regarding to their real life origin
@@ -72,7 +75,8 @@ public class ConsoleOutput
         {
             Console.WriteLine("Select what do you want to do:");
             Console.WriteLine("1. Check the most popular artist, 2. Sort the data by chosen property (ascending), " +
-                              "3. Check minimum and maximum of chosen property, 4. Check average of chosen property");
+                              "3. Check minimum and maximum of chosen property, 4. Check average of chosen property, " +
+                              "5. Check Spearman's correlation coefficient between two parameters");
 
             try
             {
@@ -83,7 +87,8 @@ public class ConsoleOutput
                 Console.WriteLine("You have to enter some value");
             }
             
-        } while (!(statisticsOfChoice == 1 || statisticsOfChoice == 2 || statisticsOfChoice == 3 || statisticsOfChoice == 4 ));
+        } while (!(statisticsOfChoice == 1 || statisticsOfChoice == 2 || statisticsOfChoice == 3 || statisticsOfChoice == 4 
+                   || statisticsOfChoice == 5 ));
 
         string property;
         bool validInput = false;
@@ -121,6 +126,18 @@ public class ConsoleOutput
                     stats.CalculateAverage(origin, property);
                     validInput = true;
                     break;
+                case 5:
+                    string property1 = null;
+                    string property2 = null;
+                    do
+                    {
+                        property1 = ChoseProperty(filepath);
+                        property2 = ChoseProperty(filepath);
+                    } while (property1 == "Artist Name" || property2 == "Artist Name");
+
+                    stats.CalculateSpearman(origin, property1, property2);
+                    validInput = true;
+                    break;
                 default:
                     Console.WriteLine("Wrong input, try again");
                     break;
@@ -140,7 +157,7 @@ public class ConsoleOutput
         var header = reader.GetHeader(filepath);
         int headerCounter = 1;
         
-        Console.WriteLine($"Select data you want to know from {filename} file (enter a number of the chosen option):");
+        Console.WriteLine($"Select data you want to use from {filename} file (enter a number of the chosen option):");
         foreach (string value in header)
         {
             if (value == string.Empty)

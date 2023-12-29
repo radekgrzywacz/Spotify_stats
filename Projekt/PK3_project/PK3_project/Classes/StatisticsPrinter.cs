@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Globalization;
 using System.Reflection;
 using CsvHelper;
@@ -126,4 +127,165 @@ public class StatisticsPrinter
         
         Console.WriteLine($"Average value of property named {propName} is: {formattedAvg}");
     }
+
+    public List<double> RankSpearman(List<Artist> artists, string propName)
+    {
+        string originalPropName = propName;
+        if (propName == "")
+        {
+            originalPropName = "id";
+        }
+        else
+        {
+            originalPropName = char.ToLower(propName[0]) + propName.Substring(1).Replace(" ", ""); 
+        }
+
+        int N = artists.Count();
+
+
+        var element = typeof(Artist).GetProperty(originalPropName).GetValue(artists.First());
+        Type elementType = element.GetType();
+
+        var propertyInArray = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(elementType));
+        
+        foreach (var artist in artists)
+        {
+            var propertyValue = artist?.GetType().GetProperty(originalPropName)?.GetValue(artist);
+            propertyInArray.Add(propertyValue);
+        }
+        
+        
+
+        List<double> Rank_X = new List<double>();
+
+        for (int i = 0; i < N; i++)
+        {
+            Rank_X.Add(0);
+            int r = 1, s = 1;
+
+            //Count no of smaller elements
+            // in 0 to i-1
+            if (elementType == typeof(DateTime))
+            {
+                DateTime dateTimeI = (DateTime)propertyInArray[i];
+                DateTime dateTimeJ;
+                for (int j = 0; j < i; j++)
+                {
+                    dateTimeJ = (DateTime)propertyInArray[j];
+                    if (dateTimeJ < dateTimeI)
+                        r++;
+                    if (dateTimeJ == dateTimeI)
+                        s++;
+                }
+
+
+                // Count no of smaller elements
+                // in i+1 to N-1
+                for (int j = i + 1; j < N; j++)
+                {
+                    dateTimeJ = (DateTime)propertyInArray[j];
+                    if (dateTimeJ < dateTimeI)
+                        r++;
+                    if (dateTimeJ == dateTimeI)
+                        s++;
+                }
+
+                // Use Fractional Rank formula
+                // fractional_rank = r + (n-1)/2
+                Rank_X[i] = (r + (s - 1) * 0.5);
+            }
+            else if(elementType == typeof(long))
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    if ((long) propertyInArray[j] < (long) propertyInArray[i])
+                        r++;
+                    if (propertyInArray[j] == propertyInArray[i])
+                        s++;
+                }
+
+                // Count no of smaller elements
+                // in i+1 to N-1
+                for (int j = i + 1; j < N; j++) {
+                    if ((long) propertyInArray[j] < (long) propertyInArray[i])
+                        r++;
+                    if (propertyInArray[j] == propertyInArray[i])
+                        s++;
+                }
+ 
+                // Use Fractional Rank formula
+                // fractional_rank = r + (n-1)/2
+                Rank_X[i] = (r + (s - 1) * 0.5);
+            }
+            else
+            {
+                for (int j = 0; j < i; j++)
+                {
+                    if ((int) propertyInArray[j] < (int) propertyInArray[i])
+                        r++;
+                    if (propertyInArray[j] == propertyInArray[i])
+                        s++;
+                }
+
+                // Count no of smaller elements
+                // in i+1 to N-1
+                for (int j = i + 1; j < N; j++) {
+                    if ((int) propertyInArray[j] < (int) propertyInArray[i])
+                        r++;
+                    if (propertyInArray[j] == propertyInArray[i])
+                        s++;
+                }
+ 
+                // Use Fractional Rank formula
+                // fractional_rank = r + (n-1)/2
+                Rank_X[i] = (r + (s - 1) * 0.5);
+            }
+        }
+
+        // Return Rank Vector
+        return Rank_X;
+    }
+
+    public double SpearmansCoefficient(List<double> X, List<double> Y)
+    {
+        int n = X.Count;
+        double sum_X = 0, sum_Y = 0, sum_XY = 0;
+        double squareSum_X = 0, squareSum_Y = 0;
+ 
+        for (int i = 0; i < n; i++) {
+            // sum of elements of array X.
+            sum_X = sum_X + X[i];
+ 
+            // sum of elements of array Y.
+            sum_Y = sum_Y + Y[i];
+ 
+            // sum of X[i] * Y[i].
+            sum_XY = sum_XY + X[i] * Y[i];
+ 
+            // sum of square of array elements.
+            squareSum_X = squareSum_X + X[i] * X[i];
+            squareSum_Y = squareSum_Y + Y[i] * Y[i];
+        }
+ 
+        // use formula for calculating
+        // correlation coefficient.
+        double corr
+            = (n * sum_XY - sum_X * sum_Y)
+              / Math.Sqrt(
+                  (n * squareSum_X - sum_X * sum_X)
+                  * (n * squareSum_Y - sum_Y * sum_Y));
+ 
+        return corr;
+    }
+
+    public void CalculateSpearman(List<Artist> artists, string firstProperty, string secondProperty)
+    {
+        var X = RankSpearman(artists, firstProperty);
+        var Y = RankSpearman(artists, secondProperty);
+
+        var spearman = SpearmansCoefficient(X, Y);
+        
+        Console.WriteLine($"Spearman's correlation coefficient between chosen properties is: {spearman}.");
+    }
+    
 }
