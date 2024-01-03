@@ -1,3 +1,4 @@
+using PK3_project.Classes;
 using PK3_project.ConsoleInterface;
 using PK3_project.CsvWork;
 
@@ -13,7 +14,16 @@ public class Program
 
         var console = new ConsoleOutput();
         var stats = new StatisticsPrinter();
-        console.ViewStatistics(filepath);
+        string input = null;
+
+        do
+        {
+            console.Display(filepath);
+            Console.WriteLine("\nInsert q to quit the program, anything else to choose again.");
+            input = Console.ReadLine();
+        } while (input != "q");
+        
+        
         
     }
 }

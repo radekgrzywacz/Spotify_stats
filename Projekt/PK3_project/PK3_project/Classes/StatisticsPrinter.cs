@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Globalization;
-using System.Reflection;
 using CsvHelper;
-using CsvHelper.Configuration;
 
-namespace PK3_project;
+namespace PK3_project.Classes;
 
 public class StatisticsPrinter
 {
@@ -29,7 +27,7 @@ public class StatisticsPrinter
     public void SortByProperty(List<Artist> artists, string propName)
     {
         
-        string originalPropName = propName;
+        string originalPropName;
         if (propName == "")
         {
             originalPropName = "id";
@@ -47,7 +45,18 @@ public class StatisticsPrinter
                    "/Users/radek/RiderProjects/4c668c11-gr03-repo/Projekt/PK3_project/PK3_project/sorted_data.csv"))
         using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
         {
-            csv.WriteRecords(sortedListy);
+            csv.WriteRecords(sortedListy.Select(artist => new
+            {
+                artist.id,
+                artist.artistName,
+                artist.leadStreams,
+                artist.feats,
+                artist.tracks,
+                artist.oneBillion,
+                artist.houndredMillions,
+                artist.lastUpdated,
+                Songs = string.Join(",", artist.songs)
+            }));
         }
         
         Console.WriteLine("Your list was sorted and written into a sorted_data.csv file.");
@@ -130,7 +139,7 @@ public class StatisticsPrinter
 
     public List<double> RankSpearman(List<Artist> artists, string propName)
     {
-        string originalPropName = propName;
+        string originalPropName;
         if (propName == "")
         {
             originalPropName = "id";
@@ -288,4 +297,95 @@ public class StatisticsPrinter
         Console.WriteLine($"Spearman's correlation coefficient between chosen properties is: {spearman}.");
     }
     
+    public void AddSongs(List<Artist> artists, string filepath)
+    {
+        Console.WriteLine("Insert name of an artist you want to edit: ");
+        var name = Console.ReadLine();
+
+        bool isValid = false;
+        do
+        {
+            foreach (var artist in artists)
+            {
+                if (name == artist.artistName)
+                {
+                    isValid = true;
+                    string song = null;
+                    do
+                    {
+                        Console.WriteLine("Insert a name of a song you want to add: ");
+                        song = Console.ReadLine();
+                    } while (string.IsNullOrEmpty(song));
+
+                    if (artist.songs.Contains(song))
+                    {
+                        break;
+                    }
+                    artist.songs.Add(song);
+                    break;
+                }
+            }
+        } while (isValid = false);
+        
+        using (var writer = new StreamWriter(filepath))
+        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        {
+            csv.WriteRecords(artists.Select(artist => new
+            {
+                artist.id,
+                artist.artistName,
+                artist.leadStreams,
+                artist.feats,
+                artist.tracks,
+                artist.oneBillion,
+                artist.houndredMillions,
+                artist.lastUpdated,
+                Songs = string.Join(",", artist.songs)
+            }));
+        }
+    }
+    
+    public void RemoveSongs(List<Artist> artists, string filepath)
+    {
+        Console.WriteLine("Insert name of an artist you want to edit: ");
+        var name = Console.ReadLine();
+
+        bool isValid = false;
+        do
+        {
+            foreach (var artist in artists)
+            {
+                if (name == artist.artistName)
+                {
+                    isValid = true;
+                    string song = null;
+                    do
+                    {
+                        Console.WriteLine("Insert a name of a song you want to remove: ");
+                        song = Console.ReadLine();
+                    } while (!artist.songs.Contains(song));
+
+                    artist.songs.Remove(song);
+                    break;
+                }
+            }
+        } while (isValid = false);
+        
+        using (var writer = new StreamWriter(filepath))
+        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+        {
+            csv.WriteRecords(artists.Select(artist => new
+            {
+                artist.id,
+                artist.artistName,
+                artist.leadStreams,
+                artist.feats,
+                artist.tracks,
+                artist.oneBillion,
+                artist.houndredMillions,
+                artist.lastUpdated,
+                Songs = string.Join(",", artist.songs)
+            }));
+        }
+    }
 }

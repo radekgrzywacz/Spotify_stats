@@ -1,4 +1,7 @@
+using System.Reflection;
+using PK3_project.Classes;
 using PK3_project.CsvWork;
+
 
 namespace PK3_project.ConsoleInterface;
 
@@ -11,8 +14,6 @@ public class ConsoleOutput
         var artists = reader.Read(filepath).ToList();
 
         var stats = new StatisticsPrinter();
-
-        stats.RankSpearman(artists, "leadStreams");
         
         // On account of project requirements I assumed that every region will have equal amount of artist,
         // with no regarding to their real life origin
@@ -107,16 +108,6 @@ public class ConsoleOutput
                     break;
                 case 3:
                     property = ChoseProperty(filepath);
-                    // try
-                    // {
-                    //     stats.CalculateMinMax(origin, property);
-                    //     validInput = true;
-                    // }
-                    // catch (Exception ex)
-                    // {
-                    //     Console.WriteLine("Wrong data chosen, pick again: ");
-                    //     validInput = false;
-                    // }
                     stats.CalculateMinMax(origin, property);
                     validInput = true;
                     
@@ -205,5 +196,79 @@ public class ConsoleOutput
 
 
         return propertyOfChoice;
+    }
+
+    public void ListArtists(string filepath)
+    {
+        var reader = new Reader();
+        var artists = reader.Read(filepath);
+
+        var artistsNames = new List<string>();
+
+        foreach (var artist in artists)
+        {
+            artistsNames.Add(artist.artistName);
+        }
+
+        foreach (var name in artistsNames)
+        {
+            Console.Write(name + ", ");
+        }
+
+
+    }
+
+    public void Display(string filepath)
+    {
+        var console = new ConsoleOutput();
+        var reader = new Reader();
+        var artists = reader.Read(filepath).ToList();
+        var stats = new StatisticsPrinter();
+        var reporter = new Raporter(filepath, artists);
+        
+        Console.WriteLine("What do you want to do? Press proper key to move to the next section:\n1. View Spotify statistics," +
+                          "2. Generate Report, 3. Edit songs list, 4. Check available artists.");
+        var input = Console.ReadLine();
+        bool validInput = false;
+        do
+        {
+            switch (Convert.ToInt32(input))
+            {
+                case 1:
+                    console.ViewStatistics(filepath);
+                    validInput = true;
+                    break;
+                case 2:
+                    reporter.GenerateRaport();
+                    validInput = true;
+                    break;
+                case 3:
+                    string songInput = null;
+                    do
+                    {
+                        Console.WriteLine("Press 1 to add a song and 2 to remove one:");
+                        songInput = Console.ReadLine();
+                        if (songInput == "1")
+                        {
+                            stats.AddSongs(artists, filepath);
+                        }
+                        else if (songInput == "2")
+                        {
+                            stats.RemoveSongs(artists, filepath);
+                        }
+                    } while (!(songInput == "1" || songInput == "2"));
+                    validInput = true;
+                    break;
+                case 4:
+                    console.ListArtists(filepath);
+                    validInput = true;
+                    break;
+                default:
+                    Console.WriteLine("Wrong input, try again");
+                    break;
+
+            }
+        } while (!validInput);
+        
     }
 }

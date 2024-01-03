@@ -1,4 +1,5 @@
 using System.Globalization;
+using CsvHelper;
 using Microsoft.VisualBasic.FileIO;
 
 
@@ -65,7 +66,8 @@ public class Reader
                         tracks = ParseInt(fields[4]),
                         oneBillion = int.Parse(fields[5]),
                         houndredMillions = int.Parse(fields[6]),
-                        lastUpdated = DateTime.ParseExact(fields[7], "dd.MM.yy", CultureInfo.InvariantCulture)
+                        lastUpdated = DateTime.ParseExact(fields[7], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                        songs = fields.Length > 8 ? fields[8].Split(',').Select(s => s.Trim()).ToList() : new List<string>()
                     };
                 }
                 catch (Exception ex)
@@ -84,5 +86,4 @@ public class Reader
 
         }
     }
-    
 }
