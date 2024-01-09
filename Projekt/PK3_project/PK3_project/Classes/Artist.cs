@@ -23,5 +23,5 @@ public class Artist
     public DateTime lastUpdated { get; set; }
 
     public List<string> songs { get; set; }
-
+    
 }

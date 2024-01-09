@@ -22,7 +22,7 @@ public class StatisticsPrinter
         Console.WriteLine($"Best artist: {artists[bestArtistIndex].artistName}, " +
                           $"lead streams: {artists[bestArtistIndex].leadStreams}");
     }
-
+    
 
     public void SortByProperty(List<Artist> artists, string propName)
     {
@@ -40,9 +40,10 @@ public class StatisticsPrinter
         List<Artist> sortedListy =
             artists.OrderBy(x => typeof(Artist).GetProperty(originalPropName).GetValue(x, null)).ToList();
 
+        string outputFilepath = Directory.GetCurrentDirectory() + "/sorted_data.csv";
         using (var writer =
                new StreamWriter(
-                   "/Users/radek/RiderProjects/4c668c11-gr03-repo/Projekt/PK3_project/PK3_project/sorted_data.csv"))
+                   outputFilepath))
         using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
         {
             csv.WriteRecords(sortedListy.Select(artist => new
@@ -59,7 +60,7 @@ public class StatisticsPrinter
             }));
         }
         
-        Console.WriteLine("Your list was sorted and written into a sorted_data.csv file.");
+        Console.WriteLine($"Your list was sorted and written into a {outputFilepath} file.");
 
     }
 

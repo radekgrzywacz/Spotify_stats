@@ -19,7 +19,8 @@ public class Program
         do
         {
             console.Display(filepath);
-            Console.WriteLine("\nInsert q to quit the program, anything else to choose again.");
+            Console.WriteLine("\nInsert q to quit the program, anything else to choose again. Remember, that all files " +
+                              "will be updated after you quit the program");
             input = Console.ReadLine();
         } while (input != "q");
         

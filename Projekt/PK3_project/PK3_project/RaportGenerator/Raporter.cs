@@ -54,6 +54,7 @@ public class Raporter : RaportBase
             w.Write($"\rAmount of songs that gained streams over one billion: {artist.oneBillion}");
             w.Write($"\rAmount of songs that gained streams over one houndred millions: {artist.houndredMillions}");
             w.Write($"\rLast updated: {artist.lastUpdated}");
+            Console.WriteLine($"Your report was generated into the {CurrentDirectory} folder");
         }
         
     }
