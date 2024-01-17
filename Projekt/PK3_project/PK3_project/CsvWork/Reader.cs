@@ -70,11 +70,54 @@ public class Reader
                         songs = fields.Length > 8 ? fields[8].Split(',').Select(s => s.Trim()).ToList() : new List<string>()
                     };
                 }
-                catch (Exception ex)
+                catch (System.FormatException ex)
                 {
-                    var message = $"Error in deserializing line {lineCounter}: {ex.Message}";
+                    string message = $"Error in deserializing line {lineCounter}: {ex.Message}";
                     logger.Log(message);
+                    try
+                    {
+                        artist = new Artist
+                        {
+                            id = int.Parse(fields[0]),
+                            artistName = fields[1],
+                            leadStreams = ParseLong(fields[2]),
+                            feats = ParseLong(fields[3]),
+                            tracks = ParseInt(fields[4]),
+                            oneBillion = int.Parse(fields[5]),
+                            houndredMillions = int.Parse(fields[6]),
+                            lastUpdated = DateTime.ParseExact(fields[7], "dd.MM.yy", CultureInfo.InvariantCulture),
+                            songs = fields.Length > 8 ? fields[8].Split(',').Select(s => s.Trim()).ToList() : new List<string>()
+                        };
+                    }
+                    catch (Exception e)
+                    {
+                        message = $"Second error in deserializing line {lineCounter}: {e.Message}";
+                        logger.Log(message);
+                    }
+                    
+                    
                 }
+                
+                // try
+                // {
+                //     artist = new Artist
+                //     {
+                //         id = int.Parse(fields[0]),
+                //         artistName = fields[1],
+                //         leadStreams = ParseLong(fields[2]),
+                //         feats = ParseLong(fields[3]),
+                //         tracks = ParseInt(fields[4]),
+                //         oneBillion = int.Parse(fields[5]),
+                //         houndredMillions = int.Parse(fields[6]),
+                //         lastUpdated = DateTime.ParseExact(fields[7], "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                //         songs = fields.Length > 8 ? fields[8].Split(',').Select(s => s.Trim()).ToList() : new List<string>()
+                //     };
+                // }
+                // catch (Exception ex)
+                // {
+                //     var message = $"Error in deserializing line {lineCounter}: {ex.Message}";
+                //     logger.Log(message);
+                // }
 
                 if (artist != null)
                 {
