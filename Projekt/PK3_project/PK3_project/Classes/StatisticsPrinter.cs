@@ -8,19 +8,13 @@ public class StatisticsPrinter
 {
     public void PrintTheMostPopularArtist(List<Artist> artists)
     {
-        int bestArtistIndex = 0;
-        long maxStreams = 0;
-        foreach (var artist in artists)
-        {
-            if (artist.leadStreams > maxStreams)
-            {
-                maxStreams = artist.leadStreams;
-                bestArtistIndex = artists.IndexOf(artist);
-            }
-        }
-
+        int bestArtistIndex = artists
+            .Select((artist, index) => new { Artist = artist, Index = index })
+            .OrderByDescending(a => a.Artist.leadStreams)
+            .First().Index;
+        
         Console.WriteLine($"Best artist: {artists[bestArtistIndex].artistName}, " +
-                          $"lead streams: {artists[bestArtistIndex].leadStreams}");
+                          $"lead streams: {artists[bestArtistIndex].leadStreams.ToString("N0")}");
     }
     
 
@@ -318,11 +312,19 @@ public class StatisticsPrinter
                         song = Console.ReadLine();
                     } while (string.IsNullOrEmpty(song));
 
-                    if (artist.songs.Contains(song))
+                    if (artist.songs[0] == "")
                     {
+                        artist.songs[0] = song;
+                    }
+                    else if (artist.songs.Contains(song))
+                    {
+                        Console.WriteLine("This artist already has this song."); 
                         break;
                     }
-                    artist.songs.Add(song);
+                    else
+                    {
+                        artist.songs.Add(song);
+                    }
                     break;
                 }
             }

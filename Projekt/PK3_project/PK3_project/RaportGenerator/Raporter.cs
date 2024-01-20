@@ -43,19 +43,39 @@ public class Raporter : RaportBase
             Console.WriteLine($"Artist with name '{artistName}' not found.");
             return;
         }
-        
-        using (System.IO.StreamWriter w = System.IO.File.CreateText(this.FilePath))
+
+        try
         {
-            w.Write($"Raport about {artistName}:");
-            w.Write($"\rArtist: {artist.artistName}");
-            w.Write($"\rBiggest number of streams: {artist.leadStreams}");
-            w.Write($"\rFeats: {artist.feats}");
-            w.Write($"\rTracks: {artist.tracks}");
-            w.Write($"\rAmount of songs that gained streams over one billion: {artist.oneBillion}");
-            w.Write($"\rAmount of songs that gained streams over one houndred millions: {artist.houndredMillions}");
-            w.Write($"\rLast updated: {artist.lastUpdated}");
-            Console.WriteLine($"Your report was generated into the {CurrentDirectory} folder");
+            using (System.IO.StreamWriter w = System.IO.File.CreateText(this.FilePath))
+            {
+                w.Write($"Raport about {artistName}:");
+                w.Write($"\rArtist: {artist.artistName}");
+                w.Write($"\rBiggest number of streams: {artist.leadStreams.ToString("N0")}");
+                w.Write($"\rFeats: {artist.feats.ToString("N0")}");
+                w.Write($"\rTracks: {artist.tracks.ToString("N0")}");
+                w.Write($"\rAmount of songs that gained streams over one billion: {artist.oneBillion.ToString("N0")}");
+                w.Write($"\rAmount of songs that gained streams over one houndred millions: {artist.houndredMillions.ToString("N0")}");
+                w.Write($"\rLast updated: {artist.lastUpdated}");
+                if (artist.songs.Count > 0 && artist.songs[0] != "")
+                {
+                    w.Write("\rSongs:");
+                    foreach (var song in artist.songs)
+                    {
+                        w.WriteLine($"\r    -{song}");
+                    }
+                }
+                else
+                {
+                    w.Write("\rThis artist does not have any songs in data base.");
+                }
+
+                Console.WriteLine($"Your report was generated into the {CurrentDirectory} folder");
+            }
         }
-        
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
     }
 }
