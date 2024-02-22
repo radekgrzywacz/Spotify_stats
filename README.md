@@ -14,4 +14,4 @@ For the purpose of the project, please randomly assign the received data to
 specific regions of the world: Asia, America, Africa, Europe.
 Available data file.
 
-Project was supposed to be made in C++, but because I wanted completely focus on C# my proffessor agreeded to make it in C#. In repo you can also find some of my C++ exercises done during the course.
+Project was supposed to be made in C++, but because I wanted to completely focus on C# my proffessor agreeded to make it in C#. In repo you can also find some of my C++ exercises done during the course.
